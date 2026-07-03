@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardian Link - Mentor Dashboard</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+}
+
+header{
+    background:#1e3a8a;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-weight:bold;
+    position:relative;
+}
+
+.back-btn{
+    position:absolute;
+    left:15px;
+    top:12px;
+    background:white;
+    color:#1e3a8a;
+    border:none;
+    padding:5px 12px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.container{
+    width:650px;
+    background:#ffffffeb;
+    padding:20px;
+    border-radius:10px;
+    margin:40px auto;
+}
+
+.student-card{
+    margin-bottom:20px;
+    padding:15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fafafa;
+}
+
+.student-name{
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:10px;
+    margin-top:8px;
+}
+
+select,input,textarea{
+    padding:6px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+.btn{
+    padding:8px 15px;
+    background:#1e3a8a;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.btn.cancel{
+    background:#888;
+    margin-left:10px;
+}
+
+footer{
+    background:#1e3a8a;
+    color:white;
+    text-align:center;
+    padding:10px;
+    margin-top:auto;
+}
+
+.notification{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:green;
+    color:white;
+    padding:10px 20px;
+    border-radius:5px;
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<button class="back-btn" onclick="goBack()">← Back</button>
+Guardian Link - Mentor Dashboard
+</header>
+
+<div class="container">
+
+<h2>Dynamic Mentor Dashboard</h2>
+
+<select id="mentorSelect" onchange="loadStudents()">
+<option value="">Select Mentor</option>
+</select>
+
+<h3>Student List</h3>
+<div id="studentList"></div>
+
+</div>
+
+<footer>© 2026 Mentor Dashboard</footer>
+
+<div id="notification" class="notification">Submitted Successfully</div>
+
+<script>
+
+function goBack(){
+    window.location.href="login.html";
+}
+
+const mentors=["ruthik","yamuna","uday","gauthami","madhu"];
+
+const students=[
+"adithya","bunny","shrihan","yashashwini","rithwika",
+"sunny","sri","manu","raju","laxmi",
+"bavani","rani","ravi","riya","saniya",
+"ashwitha","akshaya","rithu","raana","ramya",
+"shiva","ashwitha2","rakesh","samyukth","krithika"
+];
+
+const roadmapOptions=[
+"Full Stack Web Development - Frontend - Backend - App Development",
+"Data Science - Artificial Intelligence - Machine Learning - Cyber Security",
+"Cloud Computing (AWS / Azure) - DevOps - UI / UX Design",
+"Cloud Engineer - Blockchain - IoT",
+"Data Engineering - Testing - Ethical Hacking"
+];
+
+let mentorData={};
+
+function allocateStudents(){
+    mentorData={};
+    mentors.forEach(m=>mentorData[m]=[]);
+    students.forEach((student,index)=>{
+        let mentorIndex=Math.floor(index/5);
+        if(mentorIndex<mentors.length){
+            mentorData[mentors[mentorIndex]].push(student);
+        }
+    });
+}
+
+function loadMentorDropdown(){
+    const select=document.getElementById("mentorSelect");
+    mentors.forEach(mentor=>{
+        let option=document.createElement("option");
+        option.value=mentor;
+        option.textContent=mentor.charAt(0).toUpperCase()+mentor.slice(1);
+        select.appendChild(option);
+    });
+}
+
+function loadStudents(){
+    const mentor=document.getElementById("mentorSelect").value;
+    const container=document.getElementById("studentList");
+    container.innerHTML="";
+    if(!mentor) return;
+
+    mentorData[mentor].forEach(student=>{
+
+        let studentData=JSON.parse(localStorage.getItem(student));
+
+        if(!studentData){
+            studentData={
+                attendance:"Present",
+                marks:0,
+                comment:"",
+                roadmap:roadmapOptions[0]
+            };
+            localStorage.setItem(student,JSON.stringify(studentData));
+        }
+
+        let div=document.createElement("div");
+        div.className="student-card";
+
+        div.innerHTML=`
+        <div class="student-name">${student}</div>
+
+        <div class="row">
+            <label>Attendance:</label>
+            <select class="attendance">
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label>Marks:</label>
+            <input type="number" class="marks" value="${studentData.marks}">
+        </div>
+
+        <div class="row">
+            <label>Comment:</label>
+            <textarea rows="2" class="comment">${studentData.comment}</textarea>
+        </div>
+
+        <div class="row">
+            <label>Assign Roadmap:</label>
+            <select class="roadmapSelect"></select>
+        </div>
+
+        <button class="btn submitBtn">Submit</button>
+        <button class="btn cancelBtn cancel">Cancel</button>
+        `;
+
+        const attendanceSelect=div.querySelector(".attendance");
+        const marksInput=div.querySelector(".marks");
+        const commentBox=div.querySelector(".comment");
+        const roadmapSelect=div.querySelector(".roadmapSelect");
+        const submitBtn=div.querySelector(".submitBtn");
+        const cancelBtn=div.querySelector(".cancelBtn");
+
+        roadmapOptions.forEach(road=>{
+            let option=document.createElement("option");
+            option.value=road;
+            option.textContent=road;
+            roadmapSelect.appendChild(option);
+        });
+
+        attendanceSelect.value=studentData.attendance;
+        roadmapSelect.value=studentData.roadmap;
+
+        submitBtn.onclick=()=>{
+            localStorage.setItem(student,JSON.stringify({
+                attendance:attendanceSelect.value,
+                marks:marksInput.value,
+                comment:commentBox.value,
+                roadmap:roadmapSelect.value
+            }));
+            showNotification();
+        };
+
+        cancelBtn.onclick=()=>{
+            attendanceSelect.value=studentData.attendance;
+            marksInput.value=studentData.marks;
+            commentBox.value=studentData.comment;
+            roadmapSelect.value=studentData.roadmap;
+        };
+
+        container.appendChild(div);
+    });
+}
+
+function showNotification(){
+    const notif=document.getElementById("notification");
+    notif.style.display="block";
+    setTimeout(()=>notif.style.display="none",2000);
+}
+
+allocateStudents();
+loadMentorDropdown();
+
+</script>
+
+</body>
+</html>

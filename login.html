@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Guardian Link</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#f4f6f9;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSH8DwCm2gLa4X7y2AJqwmyAxBoAVv8zp7Dg&s');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .login-box{
+            background:white;
+            padding:30px;
+            width:350px;
+            border-radius:10px;
+            box-shadow:0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:20px;
+        }
+
+        input, select{
+            width:100%;
+            padding:10px;
+            margin:8px 0;
+            border:1px solid #ccc;
+            border-radius:5px;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#0d6efd;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+            margin-top:10px;
+        }
+
+        button:hover{
+            background:#0b5ed7;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>Login</h2>
+
+    <form onsubmit="return loginUser()">
+
+        <input type="text" id="email" placeholder="Enter Email" required>
+
+        <input type="password" id="password" placeholder="Enter Password" required>
+
+        <select id="role" required>
+            <option value="">-- Select Role --</option>
+            <option value="mentor">Mentor</option>
+            <option value="student">Student</option>
+            <option value="parent">Parent</option>
+        </select>
+
+        <button type="submit">Login</button>
+
+    </form>
+</div>
+
+<script>
+function loginUser() {
+
+    var role = document.getElementById("role").value;
+
+    if (role === "mentor") {
+        window.location.href = "mentor.html";
+    }
+
+    else if (role === "student") {
+        window.location.href = "student.html";
+    }
+
+    else if (role === "parent") {
+        window.location.href = "parent.html";
+    }
+
+    return false; // stop page refresh
+}
+</script>
+
+</body>
+</html>

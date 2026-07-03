@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard - GuardianLink</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:url('https://png.pngtree.com/background/20210710/original/pngtree-teacher-s-college-classroom-coaching-course-poster-background-picture-image_1034424.jpg');
+    background-size:cover;
+    background-position:center;
+    min-height:100vh;
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+    color:#b30000;
+    margin-bottom:20px;
+}
+
+.card{
+    backdrop-filter:blur(12px);
+    border-radius:15px;
+    padding:25px;
+    margin:20px auto;
+    max-width:600px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.3);
+}
+
+input, button{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    background:#4e73df;
+    color:white;
+    cursor:pointer;
+}
+
+.progress{
+    background:#eee;
+    border-radius:20px;
+    overflow:hidden;
+    height:20px;
+    margin-top:10px;
+}
+
+.progress-bar{
+    height:100%;
+    text-align:center;
+    color:white;
+    font-size:12px;
+    line-height:20px;
+}
+
+.good{ background:#2ecc71; }
+.average{ background:#f39c12; }
+.risk{ background:#e74c3c; }
+
+.comment-box{
+    padding:15px;
+    border-left:4px solid #4e73df;
+    border-radius:8px;
+}
+
+/* 🔥 Back Button Styling */
+.back-btn{
+    position:fixed;
+    top:20px;
+    left:20px;
+    width:auto;
+    padding:8px 15px;
+    background:#e74c3c;
+    border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Parent Dashboard</h1>
+
+<!-- LOGIN SECTION -->
+<div class="card" id="loginCard">
+    <h3>Parent</h3>
+    <input type="text" id="username" placeholder="Enter Username">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;"></p>
+</div>
+
+<!-- DASHBOARD SECTION -->
+<div id="dashboard" style="display:none;">
+
+    <!-- 🔥 BACK BUTTON (TOP LEFT) -->
+    <button class="back-btn" onclick="goBack()">⬅ Back</button>
+
+    <div class="card">
+        <h3 id="studentName"></h3>
+        <p><strong>Overall Score:</strong> <span id="score"></span></p>
+        <div class="progress">
+            <div id="performanceBar" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Attendance</h3>
+        <p><strong>Attendance Percentage:</strong> <span id="attendance"></span></p>
+        <div class="progress">
+            <div id="attendanceBar" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Mentor Comments</h3>
+        <div class="comment-box" id="mentorComment"></div>
+    </div>
+
+</div>
+
+<script>
+
+// Parent Accounts
+const parents = {
+    "sunnyParent": { password:"1234", child:"sunny" },
+    "karanParent": { password:"1234", child:"Karan" },
+    "mounikaParent": { password:"1234", child:"Mounika" },
+    "anvikaParent": { password:"1234", child:"Anvika" },
+    "kavyaParent": { password:"1234", child:"Kavya" }
+};
+
+// Student Data
+const students = {
+    "sunny": { score:88, attendance:92, comment:"Sunny is performing consistently well." },
+    "Karan": { score:65, attendance:70, comment:"Needs improvement in assignments." },
+    "Mounika": { score:91, attendance:95, comment:"Excellent progress!" },
+    "Anvika": { score:72, attendance:80, comment:"Good performance." },
+    "Kavya": { score:45, attendance:60, comment:"Extra mentoring recommended." }
+};
+
+function login(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if(parents[username] && parents[username].password === password){
+        const childName = parents[username].child;
+        showDashboard(childName);
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+    } else {
+        document.getElementById("error").innerText = "Invalid Login Details!";
+    }
+}
+
+function goBack(){
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("loginCard").style.display = "block";
+
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("error").innerText = "";
+}
+
+function showDashboard(student){
+    const data = students[student];
+
+    document.getElementById("studentName").innerText = student + " - Performance Summary";
+    document.getElementById("score").innerText = data.score + "%";
+    document.getElementById("attendance").innerText = data.attendance + "%";
+    document.getElementById("mentorComment").innerText = data.comment;
+
+    const perfBar = document.getElementById("performanceBar");
+    perfBar.style.width = data.score + "%";
+    perfBar.innerText = data.score + "%";
+    perfBar.className = "progress-bar " + getStatusClass(data.score);
+
+    const attBar = document.getElementById("attendanceBar");
+    attBar.style.width = data.attendance + "%";
+    attBar.innerText = data.attendance + "%";
+    attBar.className = "progress-bar " + getStatusClass(data.attendance);
+}
+
+function getStatusClass(value){
+    if(value >= 75) return "good";
+    else if(value >= 50) return "average";
+    else return "risk";
+}
+
+</script>
+
+</body>
+</html>
